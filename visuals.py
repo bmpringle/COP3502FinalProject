@@ -1,4 +1,4 @@
-import pygame, sys
+import pygame, sys, logic
 
 WIDTH = 512
 HEIGHT = 512
@@ -106,9 +106,10 @@ def draw_lose(screen):
     )
     screen.blit(medium_surface, medium_rectangle)
 
-def draw_board_screen(screen, board : list[list[int]], selected_cell) -> tuple[pygame.Rect, pygame.Rect, pygame.Rect]:
+def draw_board_screen(screen, board : logic.Board, selected_cell) -> tuple[pygame.Rect, pygame.Rect, pygame.Rect]:
     button_font = pygame.font.Font(None, 20)
     cell_number_font = pygame.font.Font(None, 50)
+    cell_number_sketch_font = pygame.font.Font(None, 35)
 
     screen.fill(SCREEN_COLOR)
     for row in range(10):
@@ -135,18 +136,24 @@ def draw_board_screen(screen, board : list[list[int]], selected_cell) -> tuple[p
         )
 
     # Render the cell values
-    for row in range(len(board)):
-        for col in range(len(board)):
-            if board[row][col] == 0:
-                continue
-            cell_text = cell_number_font.render(str(board[row][col]), 0, LINE_COLOR)
-            cell_surface = pygame.Surface((cell_text.get_size()[0], cell_text.get_size()[1]))
-            cell_surface.fill(SCREEN_COLOR)
-            cell_surface.blit(cell_text, (0, 0))
-            screen.blit(cell_surface, cell_surface.get_rect(
-                center = ((col + 0.5) * CELL_WIDTH, (row + 0.5) * CELL_HEIGHT)
-            ))
-    
+    for row in range(len(board.current_board)):
+        for col in range(len(board.current_board)):
+            if board.current_board[row][col].get() != 0:
+                cell_text = cell_number_font.render(str(board.current_board[row][col].get()), 0, LINE_COLOR)
+                cell_surface = pygame.Surface((cell_text.get_size()[0], cell_text.get_size()[1]))
+                cell_surface.fill(SCREEN_COLOR)
+                cell_surface.blit(cell_text, (0, 0))
+                screen.blit(cell_surface, cell_surface.get_rect(
+                    center = ((col + 0.5) * CELL_WIDTH, (row + 0.5) * CELL_HEIGHT)
+                ))
+            elif board.current_board[row][col].get_sketched() != 0:
+                cell_text = cell_number_sketch_font.render(str(board.current_board[row][col].get_sketched()), 0, (50, 50, 50))
+                cell_surface = pygame.Surface((cell_text.get_size()[0], cell_text.get_size()[1]))
+                cell_surface.fill(SCREEN_COLOR)
+                cell_surface.blit(cell_text, (0, 0))
+                screen.blit(cell_surface, cell_surface.get_rect(
+                    center = ((col + 0.2) * CELL_WIDTH, (row + 0.3) * CELL_HEIGHT)
+                ))
     # Creates the buttons
     reset_text = button_font.render("RESET", 0, SCREEN_COLOR)
 

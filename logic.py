@@ -225,7 +225,53 @@ Return: list[list] (a 2D Python list to represent the board)
 def generate_sudoku(size, removed):
     sudoku = SudokuGenerator(size, removed)
     sudoku.fill_values()
-    board = sudoku.get_board()
+    solved_board = sudoku.get_board()
     sudoku.remove_cells()
-    board = sudoku.get_board()
-    return board
+    starting_board = sudoku.get_board()
+    return starting_board, solved_board
+
+class Cell:
+    def __init__(self, val):
+        self.value = val
+        self.sketched_value = 0
+
+    def get(self):
+        return self.value
+    
+    def get_sketched(self):
+        return self.sketched_value
+    
+    def confirm_value(self):
+        if self.can_edit_cell():
+            self.value = self.sketched_value
+            self.sketched_value = 0
+            return True
+        return False
+
+    def set(self, val) -> bool:
+        if self.can_edit_cell():
+            self.sketched_value = val
+            return True
+        else:
+            return False
+    
+    def can_edit_cell(self):
+        return self.value == 0
+
+class Board:
+    current_board : list[list[Cell]]
+    solved_board : list[list[int]]
+
+    def __init__(self, starting_board, solved_board) -> None:
+        self.current_board = [[Cell(val) for val in row] for row in starting_board]
+        self.solved_board = solved_board
+    
+    def sketch_value_in_cell(self, val, row, col):
+        return self.current_board[row][col].set(val)
+    
+    def confirm_sketch(self, row, col):
+        return self.current_board[row][col].confirm_value()
+
+    
+
+    

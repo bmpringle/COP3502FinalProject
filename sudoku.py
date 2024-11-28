@@ -26,11 +26,18 @@ def main():
     print(difficulty) # Number of empty cells
 
     selected_cell = None
-    sudoku_board = logic.generate_sudoku(9, difficulty)
+
+    board = logic.Board(*logic.generate_sudoku(9, difficulty))
+
+    key_map = {
+        pygame.K_1 : 1, pygame.K_2 : 2, pygame.K_3 : 3, 
+        pygame.K_4 : 4, pygame.K_5 : 5, pygame.K_6 : 6, 
+        pygame.K_7 : 7, pygame.K_8 : 8, pygame.K_9 : 9
+    }
 
     # Loop
     while True:
-        reset_rectangle, restart_rectangle, quit_rectangle = visuals.draw_board_screen(screen, sudoku_board, selected_cell)
+        reset_rectangle, restart_rectangle, quit_rectangle = visuals.draw_board_screen(screen, board, selected_cell)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -46,6 +53,11 @@ def main():
                     x, y = event.pos
                     if x < visuals.WIDTH and y < visuals.GAME_HEIGHT:
                         selected_cell = (y // visuals.CELL_HEIGHT, x // visuals.CELL_WIDTH)
+            elif event.type == pygame.KEYDOWN:
+                if event.key in key_map:
+                    board.sketch_value_in_cell(key_map[event.key], int(selected_cell[0]), int(selected_cell[1]))
+                if event.key == pygame.K_RETURN:
+                    board.confirm_sketch(int(selected_cell[0]), int(selected_cell[1]))
         pygame.display.update()
 
 if __name__ == "__main__":
