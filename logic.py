@@ -1,4 +1,5 @@
 import math, random
+from enum import Enum
 
 """
 This was adapted from a GeeksforGeeks article "Program for Sudoku Generator" by Aarti_Rathi and Ankur Trisal
@@ -258,6 +259,11 @@ class Cell:
     def can_edit_cell(self):
         return self.value == 0
 
+class BoardCompletionState(Enum):
+    INCOMPLETE = 1,
+    WON = 2,
+    LOST = 3
+
 class Board:
     current_board : list[list[Cell]]
     solved_board : list[list[int]]
@@ -271,6 +277,20 @@ class Board:
     
     def confirm_sketch(self, row, col):
         return self.current_board[row][col].confirm_value()
+    
+    def game_complete(self) -> bool:
+        final_board = [[cell.get() for cell in row] for row in self.current_board]
+        
+        for row in final_board:
+            if 0 in row:
+                return BoardCompletionState.INCOMPLETE
+        
+        if final_board == self.solved_board:
+            return BoardCompletionState.WON
+        
+        return BoardCompletionState.LOST
+    
+            
 
     
 

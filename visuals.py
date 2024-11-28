@@ -66,7 +66,7 @@ def draw_main_screen(screen):
 
     return easy_rectangle, medium_rectangle, hard_rectangle
 
-def draw_win(screen):
+def draw_win(screen) -> pygame.Rect:
     screen.fill(SCREEN_COLOR)
     title_font = pygame.font.Font(None, 100)
     title_place = title_font.render("Game Won!", 0, TEXT_COLOR)
@@ -86,7 +86,9 @@ def draw_win(screen):
     )
     screen.blit(medium_surface, medium_rectangle)
 
-def draw_lose(screen):
+    return medium_rectangle
+
+def draw_lose(screen) -> pygame.Rect:
     screen.fill(SCREEN_COLOR)
     title_font = pygame.font.Font(None, 100)
     title_place = title_font.render("Game Over", 0, TEXT_COLOR)
@@ -105,6 +107,7 @@ def draw_lose(screen):
         center=(WIDTH //2 , HEIGHT // 2)
     )
     screen.blit(medium_surface, medium_rectangle)
+    return medium_rectangle
 
 def draw_board_screen(screen, board : logic.Board, selected_cell) -> tuple[pygame.Rect, pygame.Rect, pygame.Rect]:
     button_font = pygame.font.Font(None, 20)
@@ -147,7 +150,7 @@ def draw_board_screen(screen, board : logic.Board, selected_cell) -> tuple[pygam
                     center = ((col + 0.5) * CELL_WIDTH, (row + 0.5) * CELL_HEIGHT)
                 ))
             elif board.current_board[row][col].get_sketched() != 0:
-                cell_text = cell_number_sketch_font.render(str(board.current_board[row][col].get_sketched()), 0, (50, 50, 50))
+                cell_text = cell_number_sketch_font.render(str(board.current_board[row][col].get_sketched()), 0, (100, 100, 100))
                 cell_surface = pygame.Surface((cell_text.get_size()[0], cell_text.get_size()[1]))
                 cell_surface.fill(SCREEN_COLOR)
                 cell_surface.blit(cell_text, (0, 0))
@@ -187,7 +190,7 @@ def draw_board_screen(screen, board : logic.Board, selected_cell) -> tuple[pygam
         center=(WIDTH // 2 + 100,HEIGHT // 2 + 230)
     )
     screen.blit(quit_surface, quit_rectangle)
-    return quit_rectangle, reset_rectangle, quit_rectangle
+    return reset_rectangle, restart_rectangle, quit_rectangle
 
 def init_pygame() -> pygame.Surface:
     pygame.init()

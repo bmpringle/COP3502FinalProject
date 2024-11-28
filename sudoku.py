@@ -3,8 +3,7 @@ import pygame
 import sys
 import logic
 
-def main():
-    screen = visuals.init_pygame()
+def select_difficulty(screen) -> int:
     difficulty = None
 
     # Difficulty Selection Screen
@@ -22,14 +21,28 @@ def main():
                 elif hard_rectangle.collidepoint(event.pos):
                     difficulty = 50
         pygame.display.update()
+    return difficulty
 
-    print(difficulty) # Number of empty cells
+def end_screen(screen, won : bool) -> bool:
+    while True:
+        end_screen_button = visuals.draw_win(screen) if won else visuals.draw_lose(screen)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                sys.exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                if end_screen_button.collidepoint(event.pos):
+                    return not won
+        pygame.display.update()
 
+# Returns whether or not to play another game
+def play_sudoku_game(screen, difficulty) -> bool:
     selected_cell = None
 
-    board = logic.Board(*logic.generate_sudoku(9, difficulty))
+    generated_board = logic.generate_sudoku(9, difficulty)
 
-    key_map = {
+    board = logic.Board(*generated_board)
+
+    number_key_map = {
         pygame.K_1 : 1, pygame.K_2 : 2, pygame.K_3 : 3, 
         pygame.K_4 : 4, pygame.K_5 : 5, pygame.K_6 : 6, 
         pygame.K_7 : 7, pygame.K_8 : 8, pygame.K_9 : 9
@@ -44,21 +57,47 @@ def main():
                 sys.exit()
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if quit_rectangle.collidepoint(event.pos):
-                    sys.exit()
+                    return False
                 elif reset_rectangle.collidepoint(event.pos):
-                    pass # resets board
+                    board = logic.Board(*generated_board)
                 elif restart_rectangle.collidepoint(event.pos):
-                    pass # restarts game
+                    return True
                 else:
                     x, y = event.pos
                     if x < visuals.WIDTH and y < visuals.GAME_HEIGHT:
-                        selected_cell = (y // visuals.CELL_HEIGHT, x // visuals.CELL_WIDTH)
+                        selected_cell = [y // visuals.CELL_HEIGHT, x // visuals.CELL_WIDTH]
             elif event.type == pygame.KEYDOWN:
-                if event.key in key_map:
-                    board.sketch_value_in_cell(key_map[event.key], int(selected_cell[0]), int(selected_cell[1]))
+                if event.key in number_key_map:
+                    board.sketch_value_in_cell(number_key_map[event.key], int(selected_cell[0]), int(selected_cell[1]))
                 if event.key == pygame.K_RETURN:
                     board.confirm_sketch(int(selected_cell[0]), int(selected_cell[1]))
+                    state = board.game_complete()
+                    if state != logic.BoardCompletionState.INCOMPLETE:
+                        return end_screen(screen, state == logic.BoardCompletionState.WON)
+                if event.key == pygame.K_LEFT:
+                    if selected_cell[1] - 1 >= 0:
+                        selected_cell[1] -= 1
+                if event.key == pygame.K_RIGHT:
+                    if selected_cell[1] + 1 < 9:
+                        selected_cell[1] += 1
+                if event.key == pygame.K_UP:
+                    if selected_cell[0] - 1 >= 0:
+                        selected_cell[0] -= 1
+                if event.key == pygame.K_DOWN:
+                    if selected_cell[0] + 1 < 9:
+                        selected_cell[0] += 1
+                    
         pygame.display.update()
+
+def main():
+    screen = visuals.init_pygame()
+    should_play_again = True
+
+    while should_play_again:
+        difficulty = select_difficulty(screen)
+        should_play_again = play_sudoku_game(screen, difficulty)
+
+    
 
 if __name__ == "__main__":
     main()
