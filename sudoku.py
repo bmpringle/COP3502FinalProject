@@ -1,6 +1,7 @@
 import visuals
 import pygame
 import sys
+import logic
 
 def main():
     screen = visuals.init_pygame()
@@ -25,10 +26,11 @@ def main():
     print(difficulty) # Number of empty cells
 
     selected_cell = None
+    sudoku_board = logic.generate_sudoku(9, difficulty)
 
     # Loop
     while True:
-        reset_rectangle, restart_rectangle, quit_rectangle = visuals.draw_board_screen(screen, selected_cell)
+        reset_rectangle, restart_rectangle, quit_rectangle = visuals.draw_board_screen(screen, sudoku_board, selected_cell)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

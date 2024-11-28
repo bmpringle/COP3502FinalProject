@@ -106,8 +106,9 @@ def draw_lose(screen):
     )
     screen.blit(medium_surface, medium_rectangle)
 
-def draw_board_screen(screen, selected_cell) -> tuple[pygame.Rect, pygame.Rect, pygame.Rect]:
+def draw_board_screen(screen, board : list[list[int]], selected_cell) -> tuple[pygame.Rect, pygame.Rect, pygame.Rect]:
     button_font = pygame.font.Font(None, 20)
+    cell_number_font = pygame.font.Font(None, 50)
 
     screen.fill(SCREEN_COLOR)
     for row in range(10):
@@ -132,6 +133,19 @@ def draw_board_screen(screen, selected_cell) -> tuple[pygame.Rect, pygame.Rect, 
         pygame.draw.line(
             screen, TEXT_COLOR, ((col + 1) * CELL_WIDTH, row * CELL_HEIGHT), ((col + 1) * CELL_WIDTH, (row + 1) * CELL_HEIGHT), 3
         )
+
+    # Render the cell values
+    for row in range(len(board)):
+        for col in range(len(board)):
+            if board[row][col] == 0:
+                continue
+            cell_text = cell_number_font.render(str(board[row][col]), 0, LINE_COLOR)
+            cell_surface = pygame.Surface((cell_text.get_size()[0], cell_text.get_size()[1]))
+            cell_surface.fill(SCREEN_COLOR)
+            cell_surface.blit(cell_text, (0, 0))
+            screen.blit(cell_surface, cell_surface.get_rect(
+                center = ((col + 0.5) * CELL_WIDTH, (row + 0.5) * CELL_HEIGHT)
+            ))
     
     # Creates the buttons
     reset_text = button_font.render("RESET", 0, SCREEN_COLOR)
