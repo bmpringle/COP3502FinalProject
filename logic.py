@@ -224,12 +224,25 @@ removed is the number of cells to clear (set to 0)
 Return: list[list] (a 2D Python list to represent the board)
 '''
 def generate_sudoku(size, removed):
+
     sudoku = SudokuGenerator(size, removed)
+    
     sudoku.fill_values()
     solved_board = sudoku.get_board()
+    extra_solved = solved_board
+    print("resolvido",solved_board)
+
+
+    #print("merda",solved_board)
+    return [solved_board, sudoku]
+
+def get_starting_board(sudoku):
+    print()
     sudoku.remove_cells()
     starting_board = sudoku.get_board()
-    return starting_board, solved_board
+    print("inicial",starting_board)
+    return starting_board
+
 
 class Cell:
     def __init__(self, val):
@@ -268,9 +281,10 @@ class Board:
     current_board : list[list[Cell]]
     solved_board : list[list[int]]
 
-    def __init__(self, starting_board, solved_board) -> None:
+    def __init__(self, starting_board, solved_board):
         self.current_board = [[Cell(val) for val in row] for row in starting_board]
         self.solved_board = solved_board
+        print("ola", self.solved_board)
     
     def sketch_value_in_cell(self, val, row, col):
         return self.current_board[row][col].set(val)
@@ -280,14 +294,16 @@ class Board:
     
     def game_complete(self) -> bool:
         final_board = [[cell.get() for cell in row] for row in self.current_board]
-        
+        print(final_board)
         for row in final_board:
             if 0 in row:
                 return BoardCompletionState.INCOMPLETE
-        
+###########################################################
+        print(final_board)
+        print(self.solved_board)
         if final_board == self.solved_board:
             return BoardCompletionState.WON
-        
+##########################################################     
         return BoardCompletionState.LOST
     
             

@@ -23,7 +23,15 @@ def select_difficulty(screen) -> int:
         pygame.display.update()
     return difficulty
 
-def end_screen(screen, won : bool) -> bool:
+def end_screen(screen, won ):
+    if won == logic.BoardCompletionState.WON:
+        won = True
+        "ganhou"
+    elif won == logic.BoardCompletionState.LOST:
+        won = False
+        print("perdeu")
+    else:
+        print("Deu merda aqui")
     while True:
         end_screen_button = visuals.draw_win(screen) if won else visuals.draw_lose(screen)
         for event in pygame.event.get():
@@ -38,9 +46,12 @@ def end_screen(screen, won : bool) -> bool:
 def play_sudoku_game(screen, difficulty) -> bool:
     selected_cell = None
 
-    generated_board = logic.generate_sudoku(9, difficulty)
+    solved_board = logic.generate_sudoku(9, difficulty)
+    print("antes",solved_board[0])
+    starting_board = logic.get_starting_board(solved_board[1])
+    print("depois",solved_board[0])
 
-    board = logic.Board(*generated_board)
+    board = logic.Board(starting_board, solved_board[0])
 
     number_key_map = {
         pygame.K_1 : 1, pygame.K_2 : 2, pygame.K_3 : 3, 
@@ -59,7 +70,7 @@ def play_sudoku_game(screen, difficulty) -> bool:
                 if quit_rectangle.collidepoint(event.pos):
                     return False
                 elif reset_rectangle.collidepoint(event.pos):
-                    board = logic.Board(*generated_board)
+                    board = logic.Board(starting_board, solved_board[0])
                 elif restart_rectangle.collidepoint(event.pos):
                     return True
                 else:
@@ -73,7 +84,7 @@ def play_sudoku_game(screen, difficulty) -> bool:
                     board.confirm_sketch(int(selected_cell[0]), int(selected_cell[1]))
                     state = board.game_complete()
                     if state != logic.BoardCompletionState.INCOMPLETE:
-                        return end_screen(screen, state == logic.BoardCompletionState.WON)
+                        return end_screen(screen, state)
                 if event.key == pygame.K_LEFT:
                     if selected_cell[1] - 1 >= 0:
                         selected_cell[1] -= 1
