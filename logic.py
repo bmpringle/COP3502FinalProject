@@ -226,7 +226,7 @@ Return: list[list] (a 2D Python list to represent the board)
 def generate_sudoku(size, removed):
     sudoku = SudokuGenerator(size, removed)
     sudoku.fill_values()
-    solved_board = sudoku.get_board()
+    solved_board = [row[:] for row in sudoku.get_board()] # This creates a copy of the board; 
     sudoku.remove_cells()
     starting_board = sudoku.get_board()
     return starting_board, solved_board
@@ -284,8 +284,7 @@ class Board:
         for row in final_board:
             if 0 in row:
                 return BoardCompletionState.INCOMPLETE
-        
-        if final_board == self.solved_board:
+        if final_board == self.solved_board:   
             return BoardCompletionState.WON
         
         return BoardCompletionState.LOST
