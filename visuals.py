@@ -5,6 +5,7 @@ HEIGHT = 512
 SCREEN_COLOR = (255, 255, 255)
 TEXT_COLOR = (255, 0, 0)
 LINE_COLOR = (0, 0, 0)
+ORANGE_COLOR = (255, 165, 0)
 
 GAME_HEIGHT = HEIGHT - 50
 CELL_WIDTH = WIDTH / 9
@@ -25,7 +26,7 @@ def draw_main_screen(screen):
     hard_text = button_font.render("Hard", 0, SCREEN_COLOR)
 
     easy_surface = pygame.Surface((easy_text.get_size()[0] + 20, easy_text.get_size()[1] + 20))
-    easy_surface.fill(TEXT_COLOR)
+    easy_surface.fill((255, 130, 0))
     easy_surface.blit(easy_text, (10, 10))
 
     easy_rectangle = easy_surface.get_rect(
@@ -34,7 +35,7 @@ def draw_main_screen(screen):
     screen.blit(easy_surface, easy_rectangle)
 
     medium_surface = pygame.Surface((medium_text.get_size()[0] + 20, medium_text.get_size()[1] + 20))
-    medium_surface.fill(TEXT_COLOR)
+    medium_surface.fill((255, 130, 0))
     medium_surface.blit(medium_text, (10, 10))
 
     medium_rectangle = medium_surface.get_rect(
@@ -43,7 +44,7 @@ def draw_main_screen(screen):
     screen.blit(medium_surface, medium_rectangle)
 
     hard_surface = pygame.Surface((hard_text.get_size()[0] + 20, hard_text.get_size()[1] + 20))
-    hard_surface.fill(TEXT_COLOR)
+    hard_surface.fill((255, 130, 0))
     hard_surface.blit(hard_text, (10, 10))
 
     hard_rectangle = hard_surface.get_rect(
@@ -51,7 +52,7 @@ def draw_main_screen(screen):
     )
     screen.blit(hard_surface, hard_rectangle)
 
-    title_place = title_font.render("Sudoku", 0, TEXT_COLOR)
+    title_place = title_font.render("Welcome to Sudoku", 0, TEXT_COLOR)
     title_rect = title_place.get_rect(
         center=(WIDTH // 2, HEIGHT // 2 - 150))
 
